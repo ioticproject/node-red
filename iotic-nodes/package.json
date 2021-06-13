@@ -1,0 +1,16 @@
+{
+  "name": "iotic-nodes",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "license": "ISC",
+  "node-red": {
+    "nodes": {
+      "sensor": "sensor/sensor.js",
+      "actor": "actor/actor.js"
+    }
+  },
+  "dependencies": {
+    "axios": "^0.21.1"
+  }
+}

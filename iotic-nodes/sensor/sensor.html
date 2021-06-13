@@ -1,0 +1,97 @@
+<script type="text/javascript">
+    $.ajaxSetup({
+        headers: {
+            "Authorization": "jwt eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MjMzNTIwMjUsImlhdCI6MTYyMzMxNjAyNSwibmJmIjoxNjIzMzE2MDI1LCJpZGVudGl0eSI6IjVjMTlhNWEyZmNkNjRlMmE5NDAxMjI1YjYxNTk2YjNkIn0.mAFnnGaVNItnABuuOiYf2uA93aGu3hV75Rb1-xlEhqg"
+        }
+    });
+
+
+    if (!getDevices) {
+        var getDevices = () => {
+            return new Promise((resolve => {
+                $.get("http://localhost:5000/api/users/5c19a5a2fcd64e2a9401225b61596b3d/devices", data => {
+                    resolve(data);
+                })
+            }));
+        }
+    }
+
+    async function getSensors() {
+        return new Promise((resolve => {
+            $.get("http://localhost:5000/api/users/5c19a5a2fcd64e2a9401225b61596b3d/sensors", data => {
+                resolve(data);
+            })
+        }));
+    }
+
+    RED.nodes.registerType('sensor', {
+        category: 'iotic',
+        color: '#8f69ff',
+        defaults: {
+            deviceName: {value: "", required: true},
+            device: {value: "", required: true},
+            sensor: {value: "", required: true},
+        },
+        outputs: 1,
+        icon: "inject.svg",
+        label: function () {
+            return this.deviceName + ":" + this.sensor || "sensors";
+        },
+        oneditprepare: function () {
+            let editor = this;
+
+            getDevices().then(data => {
+                let devices = data.devices;
+
+                for (let device of devices) {
+                    $('#node-input-device').append(
+                        "  <option value=\"" + device._id + "\">" + device.name + "</option>"
+                    );
+                }
+
+                function loadSensors(deviceId) {
+                    editor.deviceName = devices.find(it => it._id === deviceId).name;
+                    getSensors().then(data => {
+                        let sensors = data.sensors.filter(sensor => sensor.id_device === deviceId);
+                        $('#node-input-sensor').empty();
+                        for (let sensor of sensors) {
+                            $('#node-input-sensor').append(
+                                "  <option value=\"" + sensor.name + "\">" + sensor.name + "</option>"
+                            );
+                        }
+
+                        if (editor.sensor) {
+                            $('#node-input-sensor').val(editor.sensor).change();
+                        }
+                    })
+                }
+
+                if (editor.device) {
+                    $('#node-input-device').val(editor.device).change();
+                    loadSensors(editor.device);
+                }
+
+                $('#node-input-device').on('change', function () {
+                    loadSensors(this.value);
+                })
+            });
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="sensor">
+    <div className="form-row">
+        <label htmlFor="node-input-device"><i className="fa fa-tag"></i> Device</label>
+        <select type="text" id="node-input-device" placeholder="Device">
+        </select>
+    </div>
+    <div className="form-row">
+        <label htmlFor="node-input-sensor"><i className="fa fa-tag"></i> Sensor</label>
+        <select type="text" id="node-input-sensor" placeholder="Sensor">
+        </select>
+    </div>
+</script>
+
+<script type="text/html" data-help-name="sensor">
+    <p>A simple node that converts the message payloads into all lower-case characters</p>
+</script>

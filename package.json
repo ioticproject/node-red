@@ -1,0 +1,15 @@
+{
+  "name": "red",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "node-red --userDir=. --flowFile=flows.json"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "iotic-nodes": "file:iotic-nodes",
+    "websocket": "^1.0.34",
+    "websocket-as-promised": "^2.0.1"
+  }
+}
