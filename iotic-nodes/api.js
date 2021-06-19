@@ -2,7 +2,7 @@ const WebSocketAsPromised = require('websocket-as-promised');
 const W3CWebSocket = require('websocket').w3cwebsocket;
 
 class Api {
-    host = "localhost:81"
+    host = "pub-sub-gateway:81"
     token = "red-secret"
 
     wsp = new WebSocketAsPromised('ws://' + this.host, {

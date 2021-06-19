@@ -1,7 +1,28 @@
 <script type="text/javascript">
+
+    if(!iotic_token){
+        function getCookie(cname) {
+            var name = cname + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var ca = decodedCookie.split(';');
+            for(var i = 0; i <ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        var iotic_token = getCookie("iotic_token");
+    }
+
     $.ajaxSetup({
         headers: {
-            "Authorization": "jwt eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MjM0NDAxNDcsImlhdCI6MTYyMzQwNDE0NywibmJmIjoxNjIzNDA0MTQ3LCJpZGVudGl0eSI6IjVjMTlhNWEyZmNkNjRlMmE5NDAxMjI1YjYxNTk2YjNkIn0.hjYdSFJPxt-hvhggNZjnjf_kdtjjMI7R42fSrFSi5q4"
+            "Authorization": "jwt " + iotic_token
         }
     });
 
@@ -9,7 +30,7 @@
     if (!getDevices) {
         var getDevices = () => {
             return new Promise((resolve => {
-                $.get("http://localhost:5000/api/users/5c19a5a2fcd64e2a9401225b61596b3d/devices", data => {
+                $.get("http://iotic.mywire.org:5000/api/users/5c19a5a2fcd64e2a9401225b61596b3d/devices", data => {
                     resolve(data);
                 })
             }));
@@ -18,7 +39,7 @@
 
     async function getActors() {
         return new Promise((resolve => {
-            $.get("http://localhost:5000/api/users/5c19a5a2fcd64e2a9401225b61596b3d/actors", data => {
+            $.get("http://iotic.mywire.org:5000/api/users/5c19a5a2fcd64e2a9401225b61596b3d/actors", data => {
                 resolve(data);
             })
         }));
