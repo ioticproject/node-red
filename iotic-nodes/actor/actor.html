@@ -26,7 +26,6 @@
         }
     });
 
-
     if (!getDevices) {
         var getDevices = () => {
             return new Promise((resolve => {
@@ -37,13 +36,14 @@
         }
     }
 
-    async function getActors() {
+    async function getActors(deviceId) {
         return new Promise((resolve => {
-            $.get("http://iotic.mywire.org:5000/api/users/5c19a5a2fcd64e2a9401225b61596b3d/actors", data => {
+            $.get("http://iotic.mywire.org:5000/api/users/5c19a5a2fcd64e2a9401225b61596b3d/devices/" + deviceId + "/actors", data => {
                 resolve(data);
             })
         }));
     }
+
 
     RED.nodes.registerType('actor', {
         category: 'iotic',
@@ -73,8 +73,7 @@
 
                 function loadActors(deviceId) {
                     editor.deviceName = devices.find(it => it._id === deviceId).name;
-                    getActors().then(data => {
-                        let actors = data.actors.filter(actor => actor.id_device === deviceId);
+                    getActors().then(({actors}) => {
                         $('#node-input-actor').empty();
                         for (let actor of actors) {
                             $('#node-input-actor').append(
@@ -86,6 +85,10 @@
                             $('#node-input-actor').val(editor.actor).change();
                         }
                     })
+                }
+
+                if(!editor.device && devices.length > 0){
+                    editor.device = devices[0]._id;
                 }
 
                 if (editor.device) {

@@ -1,10 +1,10 @@
 <script type="text/javascript">
-    if(!iotic_token){
+    if (!iotic_token) {
         function getCookie(cname) {
             var name = cname + "=";
             var decodedCookie = decodeURIComponent(document.cookie);
             var ca = decodedCookie.split(';');
-            for(var i = 0; i <ca.length; i++) {
+            for (var i = 0; i < ca.length; i++) {
                 var c = ca[i];
                 while (c.charAt(0) == ' ') {
                     c = c.substring(1);
@@ -35,9 +35,9 @@
         }
     }
 
-    async function getSensors() {
+    async function getSensors(deviceId) {
         return new Promise((resolve => {
-            $.get("http://iotic.mywire.org:5000/api/users/5c19a5a2fcd64e2a9401225b61596b3d/sensors", data => {
+            $.get("http://iotic.mywire.org:5000/api/users/5c19a5a2fcd64e2a9401225b61596b3d/devices/" + deviceId + "/sensors", data => {
                 resolve(data);
             })
         }));
@@ -70,8 +70,7 @@
 
                 function loadSensors(deviceId) {
                     editor.deviceName = devices.find(it => it._id === deviceId).name;
-                    getSensors().then(data => {
-                        let sensors = data.sensors.filter(sensor => sensor.id_device === deviceId);
+                    getSensors(deviceId).then(({sensors}) => {
                         $('#node-input-sensor').empty();
                         for (let sensor of sensors) {
                             $('#node-input-sensor').append(
@@ -83,6 +82,10 @@
                             $('#node-input-sensor').val(editor.sensor).change();
                         }
                     })
+                }
+
+                if (!editor.device && devices.length > 0) {
+                    editor.device = devices[0]._id;
                 }
 
                 if (editor.device) {
