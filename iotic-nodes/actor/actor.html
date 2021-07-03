@@ -17,7 +17,7 @@
             return "";
         }
 
-        var iotic_token = getCookie("iotic_token");
+        var iotic_token = getCookie("iotic_token")
     }
 
     $.ajaxSetup({
@@ -73,7 +73,7 @@
 
                 function loadActors(deviceId) {
                     editor.deviceName = devices.find(it => it._id === deviceId).name;
-                    getActors().then(({actors}) => {
+                    getActors(deviceId).then(({actors}) => {
                         $('#node-input-actor').empty();
                         for (let actor of actors) {
                             $('#node-input-actor').append(
